@@ -1,6 +1,7 @@
 import { PerspectiveCamera } from 'three';
 class Camera{
 
+	
 	static create(){
 		const camera = new PerspectiveCamera(
 			35, // fov = Field Of View

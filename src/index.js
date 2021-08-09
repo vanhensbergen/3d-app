@@ -1,6 +1,5 @@
 import {World} from './app/World'
 
-
 	
 (()=>{
 	const container =  document.querySelector("#scene-container")

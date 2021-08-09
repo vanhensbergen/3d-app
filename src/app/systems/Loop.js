@@ -1,5 +1,6 @@
 import { Clock } from 'three';
 
+
 class Loop {
 	#camera
 	#scene
@@ -21,6 +22,7 @@ class Loop {
 			this.#renderer.render(this.#scene,this.#camera)
 		})
 	}
+	
 	addUpdatable(updatable){
 		this.#updatables.push(updatable)
 	}

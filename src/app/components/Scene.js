@@ -1,4 +1,5 @@
 import { Color, Scene as Stage } from 'three';
+
 class Scene{
 
 	static create() {

@@ -3,6 +3,7 @@ class Resizer {
 	#container;
 	#camera;
 	#renderer;
+	
 	constructor(container, camera, renderer) {
 		// Set the camera's aspect ratio
 		this.#container = container;
