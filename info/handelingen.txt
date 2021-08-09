@@ -1,0 +1,14 @@
+1 maak een root map voor je aapp 3d-app
+2 open powershell en voer uit npm init
+	dit stelt vragen en maakt een package.json file aan
+3 installeer webpack voor de te maken applicatie
+		yarn add webpack webpack-cli -D
+4 voeg three toe aan het project met yarn
+		yarn add three
+voer uit wat in de url https://www.devfacto.com/blog/webpack-basics-tutorial
+
+maak een webpack.config.js met inhoud aan.
+pas voor het pad naar webpck ook package.json aan.
+
+
+	

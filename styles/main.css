@@ -1,0 +1,17 @@
+*{
+	padding:0;
+	margin:0
+}
+
+body{
+	/*remove scrollbars*/
+	overflow:hidden;
+}
+#scene-container {
+	/* tell our scene container to take up the full page */
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  /*give background same colour as scene to get no flickers on startup*/
+  background-color: white;
+}
