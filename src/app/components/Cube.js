@@ -46,6 +46,7 @@ class Cube{
 		const b = value 
 		return `rgb(${r},${g},${b})`;
 	}
+	
 	// a physically correct "standard" material
 	static #createMaterial(bgcolor,forecolor)
 	{	
@@ -56,7 +57,6 @@ class Cube{
 		//texture.wrapT = RepeatWrapping;
 		//texture.repeat.set(3,3)
 		//const color = 'red'
-		bgcolor = Cube.#isHex(bgcolor)?new Color(bgcolor):bgcolor;
 		
 		const materials = [ ]
 		/*for(let i =1;i<4;i++){
@@ -64,27 +64,28 @@ class Cube{
 			materials.push(new MeshStandardMaterial({color:color, map:textureLoader.load(`assets/textures/${7-i}.png`)}))
 		}*/
 		for(let i=1; i<4; i++){
-			materials.push(new MeshStandardMaterial({color:bgcolor,map:Cube.#createCubeFaceTexture(forecolor,i) }))
-			materials.push(new MeshStandardMaterial({color:bgcolor,map:Cube.#createCubeFaceTexture(forecolor,7-i) }))
+			materials.push(new MeshStandardMaterial({map:Cube.#createCubeFaceTexture(bgcolor,forecolor,i) }))
+			materials.push(new MeshStandardMaterial({map:Cube.#createCubeFaceTexture(bgcolor,forecolor,7-i) }))
 		}
 								
 		return materials;
 	}	
 	
-	static #createCubeFaceTexture(color, value){
-		const forecolor = Cube.#isHex(color)?Cube.#hexToRGB(color):color; 
+	static #createCubeFaceTexture(bcolor,fcolor, value){
+		const forecolor = Cube.#isHex(fcolor)?Cube.#hexToRGB(fcolor):fcolor; 
+		const backgroundcolor = Cube.#isHex(bcolor)?Cube.#hexToRGB(bcolor):bcolor; 
 		const canvas = document.createElement('canvas');
 		const size = 256
 		canvas.width = size;
 		canvas.height= size;
 		const ctx = canvas.getContext('2d');
-		ctx.fillStyle = 'white';
+		ctx.fillStyle = backgroundcolor;
 		ctx.fillRect(0,0,canvas.width,canvas.width)
 		ctx.strokeStyle = forecolor;
 		ctx.lineWidth = 3;
 		ctx.fillStyle = forecolor;
 		Cube.#createRoundedRectangle(canvas,3,3,canvas.width-6,canvas.height-6)
-		const r = size/8-2//r moet kleiner dan size/8 anders is er overlap bij de waarde 6
+		const r = size/8-3//r moet kleiner dan size/8 anders is er overlap bij de waarde 6
 		
 		switch(value){
 			case 1:
