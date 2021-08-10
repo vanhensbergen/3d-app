@@ -1,10 +1,12 @@
+import {Cube} from './components/Cube';
 import { Camera } from './components/Camera';
-import { Cube } from './components/Cube';
 import { Scene } from './components/Scene';
 import {Light} from './components/Light'
 import { Renderer } from './systems/Renderer';
 import { Resizer } from './systems/Resizer';
-import {Loop } from './systems/Loop'
+import {Loop } from './systems/Loop';
+
+
 
 class World {
  #container
@@ -14,41 +16,52 @@ class World {
  #scene;
  #renderer
  #loop;
- #actors;
+ #updatables;
  
  
   constructor(container) {
 	  this.#container = container
-	  this.#actors = [];
-	  this.addActor( Cube.create({bgcolor:'lightgreen',forecolor:'red',size:2.5}));
-	  this.addActor( Cube.create({bgcolor:'blue',forecolor:'white',size:2}));
-	  this.addActor( Cube.create({bgcolor:0x000000,forecolor:'#00ff00',size:1}));
-	  this.positionActor(1,4 ,0,0)
-	  this.positionActor(2,-4,0,0)
+	  this.#updatables = [];
+	  this.addUpdatable(new Cube(2.5,'black','green'));
+	  this.addUpdatable(new Cube(2,'blue','white'));
+	  this.addUpdatable(new Cube(1.5,'black','green'));
+	  this.positionUpdatable(1,4,0,0);
+	  this.positionUpdatable(2,-4,0,0);
+	  //colors are changeble with propertie setters. Great!!!!
+	  this.#updatables[0].foreColor ='red';
+	  this.#updatables[0].backColor ='lightgreen';
+	  
+
 	  this.#scene = Scene.create();
 	  this.#camera = Camera.create();
 	  this.#renderer = Renderer.create();
 	  this.#loop = new Loop( this.camera, this.scene, this.renderer)
-	  for (const actor of this.#actors)
+	  for (const updatable of this.#updatables)
 	  {
-		  this.loop.addUpdatable(actor)
+		  this.loop.addUpdatable(updatable)
 	  }
 	  this.container.append(this.renderer.domElement);
 	  this.#directionalLight = Light.createDirectionalLight();
 	  this.#ambientLight = Light.createAmbientLight();
-	  this.scene.add(...this.#actors,this.directionalLight, this.ambientLight);
+	  this.scene.add(...this.updatableMeshes, this.directionalLight, this.ambientLight);
 	  new Resizer(this.container, this.camera, this.renderer);
-	  //overriding of onResize method in World. Niet meer nodig bij een animatieloop. Die gaat 60x per seconde
-	  //this.#resizer.onResize = ()=>{ this.render()};
 	}
 	render() {
 	  this.renderer.render(this.scene, this.camera);
 	}
-	addActor(actor){
-		this.#actors.push(actor);
+	addUpdatable(updatable){
+		this.#updatables.push(updatable);
 	}
-	positionActor(actorIndex,x,y,z){
-		this.#actors[actorIndex].position.set(x,y,z);
+	get updatableMeshes(){
+		const meshes = [];
+		for (const updatable of this.#updatables)
+		{
+			meshes.push(updatable.mesh);
+		}
+		return meshes;
+	}
+	positionUpdatable(actorIndex,x,y,z){
+		this.#updatables[actorIndex].position(x,y,z);
 	}
 	stop(){
 	 this.loop.stop();

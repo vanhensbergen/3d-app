@@ -1,127 +1,118 @@
-import {	BoxGeometry, 
-			Mesh, 
-			MeshStandardMaterial,
-			TextureLoader,
-			CanvasTexture,	
-			Color
-		} 
+import {	
+    BoxGeometry, 
+    Mesh, 
+    MeshStandardMaterial,
+    TextureLoader,
+    CanvasTexture,
+} 
 from 'three';
-class Cube{
-	static create(values) {
-		values = values??{}
-		let {size = 1,bgcolor = 'white',forecolor='black'} = values
-		  // create a geometry
-		const geometry = new BoxGeometry(size, size, size);
+class Cube extends BoxGeometry{
+    #foreColor;
+    #backColor;
+    #canvasses;
+    #mesh
+    constructor(size,backcolor, forecolor){
+        super(size,size,size);
+        this.#foreColor = forecolor;
+        this.#backColor = backcolor;
+        this.#canvasses = [];
+        for (let i =0; i<6; i++)
+        {
+            this.#canvasses.push(document.createElement('canvas'));
+        }
+        this.#init();
+    }
+    get mesh(){
+        return this.#mesh;
+    }
+    #init(){
 
-		const material = Cube.#createMaterial(bgcolor,forecolor);
-		  // create a Mesh containing the geometry and material
-		const cube = new Mesh(geometry, material);
-		
-		cube.rotation.set(-0.5, -0.1, 0.8);
-		cube.tick = (delta)=>{
-							//delta is the time it takes to have a new update
-							//fraction is the size in radians so the rotation goes at 3 degrees a second
-							const fraction = 30/180*Math.PI*delta
-							cube.rotation.z += 0.7*fraction
-							cube.rotation.x += fraction
-							cube.rotation.y += 0.3*fraction
-						}
-		return cube;
-	}
-	
-	static #isHex(color){
-		if(Number.isInteger(color)){
-			return true;
-		}
-		const value = Number.parseInt(color);
-		return !isNaN(value);
-	}
-		
-	static  #hexToRGB(color){
-		let value = parseInt(color);
-		const r = Math.floor(value/16**4);
-		value -= r*16**4
-		const g = Math.floor(value/16**2)
-		value -= g*16**2
-		const b = value 
-		return `rgb(${r},${g},${b})`;
-	}
-	
-	// a physically correct "standard" material
-	static #createMaterial(bgcolor,forecolor)
-	{	
+        this.#createCubeFaces();
+        const materials = this.#createMaterial();
+        this.#mesh = new Mesh(this,materials);
+
+    }
+    #createCubeFaces() {
+        for (let i = 1; i < 7; i++) {
+            this.#createCubeFace(i);
+        }
+    }
+
+    rotation(x,y,z){
+        this.#mesh.rotation.set(x, y, z);
+    }
+    position(x,y,z){
+        this.#mesh.position.set(x,y,z)
+    }
+
+	#createMaterial(){	
+        const textures = [];
+        for( const canvas of this.#canvasses){
+            textures.push(new CanvasTexture(canvas));
+        } 
 		const textureLoader = new TextureLoader();
 		
 		const materials = [ ]
-		/*for(let i =1;i<4;i++){
-			materials.push(new MeshStandardMaterial({color:color,map:textureLoader.load(`assets/textures/${i}.png`) }))
-			materials.push(new MeshStandardMaterial({color:color, map:textureLoader.load(`assets/textures/${7-i}.png`)}))
-		}*/
 		for(let i=1; i<4; i++){
-			materials.push(new MeshStandardMaterial({map:Cube.#createCubeFaceTexture(bgcolor,forecolor,i) }))
-			materials.push(new MeshStandardMaterial({map:Cube.#createCubeFaceTexture(bgcolor,forecolor,7-i) }))
+            //;
+			materials.push(new MeshStandardMaterial({map:textures[i] }))
+			materials.push(new MeshStandardMaterial({map:textures[4-i] }))
 		}
 								
 		return materials;
 	}	
 	
-	static #createCubeFaceTexture(bcolor,fcolor, value){
-		const forecolor = Cube.#isHex(fcolor)?Cube.#hexToRGB(fcolor):fcolor; 
-		const backgroundcolor = Cube.#isHex(bcolor)?Cube.#hexToRGB(bcolor):bcolor; 
-		const canvas = document.createElement('canvas');
+	#createCubeFace(value){
+		const canvas = this.#canvasses[value-1]//canvas met index 0 is verantwoordelijk voor side with one eye etc
 		const size = 256
 		canvas.width = size;
 		canvas.height= size;
 		const ctx = canvas.getContext('2d');
-		ctx.fillStyle = backgroundcolor;
+		ctx.fillStyle = this.#backColor;
 		ctx.fillRect(0,0,canvas.width,canvas.width)
-		ctx.strokeStyle = forecolor;
+		ctx.strokeStyle = this.#foreColor;
 		ctx.lineWidth = 3;
-		ctx.fillStyle = forecolor;
-		Cube.#createRoundedRectangle(canvas,3,3,canvas.width-6,canvas.height-6)
+		ctx.fillStyle = this.#foreColor;
+		this.#createRoundedRectangle(canvas,3,3,canvas.width-6,canvas.height-6)
 		const r = size/8-3//r moet kleiner dan size/8 anders is er overlap bij de waarde 6
-		
+	
 		switch(value){
 			case 1:
-				Cube.#createEye(canvas,2 ,2,r)
+				this.#createEye(canvas,2 ,2,r)
 				break;
 			case 2:
-				Cube.#createEye(canvas,1,1,r)
-				Cube.#createEye(canvas,3,3,r);
+				this.#createEye(canvas,1,1,r)
+				this.#createEye(canvas,3,3,r);
 				break;
 			case 3:
-				Cube.#createEye(canvas,3,1,r)
-				Cube.#createEye(canvas,2,2,r);
-				Cube.#createEye(canvas,1,3,r);
+				this.#createEye(canvas,3,1,r)
+				this.#createEye(canvas,2,2,r);
+				this.#createEye(canvas,1,3,r);
 				break;
 			case 4:
-				Cube.#createEye(canvas,1,1,r)
-				Cube.#createEye(canvas,3,1,r);
-				Cube.#createEye(canvas,1,3,r);
-				Cube.#createEye(canvas,3,3,r);
+				this.#createEye(canvas,1,1,r)
+				this.#createEye(canvas,3,1,r);
+				this.#createEye(canvas,1,3,r);
+				this.#createEye(canvas,3,3,r);
 				break;
 			case 5:
-				Cube.#createEye(canvas,1,1,r)
-				Cube.#createEye(canvas,3,1,r);
-				Cube.#createEye(canvas,1,3,r);
-				Cube.#createEye(canvas,3,3,r);
-				Cube.#createEye(canvas,2,2,r)
+				this.#createEye(canvas,1,1,r)
+				this.#createEye(canvas,3,1,r);
+				this.#createEye(canvas,1,3,r);
+				this.#createEye(canvas,3,3,r);
+				this.#createEye(canvas,2,2,r)
 				break;
 			case 6:
-				Cube.#createEye(canvas,1,1,r)
-				Cube.#createEye(canvas,3,1,r);
-				Cube.#createEye(canvas,1,3,r);
-				Cube.#createEye(canvas,3,3,r);
-				Cube.#createEye(canvas,1,2,r)
-				Cube.#createEye(canvas,3,2,r)
+				this.#createEye(canvas,1,1,r)
+				this.#createEye(canvas,3,1,r);
+				this.#createEye(canvas,1,3,r);
+				this.#createEye(canvas,3,3,r);
+				this.#createEye(canvas,1,2,r)
+				this.#createEye(canvas,3,2,r)
 				break;
 		}
-		
-		var texture = new CanvasTexture(canvas);
-		return texture;
-		
 	}
-	static #createEye(canvas, x,y,r){
+	#createEye(canvas, x,y,r){
 		const xx = x*canvas.width/4;
 		const yy = y*canvas.height/4
 		const pen = canvas.getContext('2d')
@@ -133,7 +124,7 @@ class Cube{
 		pen.fill();
 		pen.restore();
 	}
-	static #createRoundedRectangle(canvas,x,y,width,height){
+	#createRoundedRectangle(canvas,x,y,width,height){
 		const pen = canvas.getContext('2d')
 		pen.save()
 		const r = 12;
@@ -151,6 +142,28 @@ class Cube{
 			pen.stroke();
 		pen.restore()
 	}
+    get foreColor(){
+        return this.#foreColor 
+    }
+    set foreColor(value){
+        this.#foreColor = value;
+        this.#createCubeFaces();
+        
+    }
+    get backColor(){
+        return this.#backColor 
+    }
+    set backColor(value){
+        this.#backColor = value;
+		this.#createCubeFaces();
+    }
+    tick (delta){
+        //delta is the time it takes to have a new update
+        //fraction is the size in radians so the rotation goes at 3 degrees a second
+        const fraction = 30/180*Math.PI*delta
+        this.#mesh.rotation.z += 0.7*fraction
+        this.#mesh.rotation.x += fraction
+        this.#mesh.rotation.y += 0.3*fraction
+    }
 }
-
-export { Cube };
+export {Cube}
