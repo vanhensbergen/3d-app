@@ -20,12 +20,11 @@ class World {
   constructor(container) {
 	  this.#container = container
 	  this.#actors = [];
-	  this.addActor( Cube.create({bgcolor:'lightgreen',forecolor:'red',size:3}));
+	  this.addActor( Cube.create({bgcolor:'lightgreen',forecolor:'red',size:2.5}));
 	  this.addActor( Cube.create({bgcolor:'blue',forecolor:'white',size:2}));
 	  this.addActor( Cube.create({bgcolor:0x000000,forecolor:'#00ff00',size:1}));
-	  this.#actors[0].position.set(-0.5,0,0)
-	  this.#actors[1].position.set(4 ,0,0)
-	  this.#actors[2].position.set(-5,0,0)
+	  this.positionActor(1,4 ,0,0)
+	  this.positionActor(2,-5,0,0)
 	  this.#scene = Scene.create();
 	  this.#camera = Camera.create();
 	  this.#renderer = Renderer.create();
@@ -47,6 +46,9 @@ class World {
 	}
 	addActor(actor){
 		this.#actors.push(actor);
+	}
+	positionActor(actorIndex,x,y,z){
+		this.#actors[actorIndex].position.set(x,y,z);
 	}
 	stop(){
 	 this.loop.stop();
