@@ -49,14 +49,14 @@ class Cube extends BoxGeometry{
         const textures = [];
         for( const canvas of this.#canvasses){
             textures.push(new CanvasTexture(canvas));
+			//elke texture bevat een canvas met een aantal ogen één hoger dan de index van de texture
         } 
 		const materials = [ ]
-		for(let i=1; i<4; i++){
-            //;
+		for(let i=0; i<3; i++){
+            //de volgorde van pushing zorgt voor correcte dobbelsteen met  de 2 opponerende zijden samen steeds 7;
 			materials.push(new MeshStandardMaterial({map:textures[i] }))
-			materials.push(new MeshStandardMaterial({map:textures[4-i] }))
-		}
-								
+			materials.push(new MeshStandardMaterial({map:textures[5-i] }))
+		}						
 		return materials;
 	}	
 	
