@@ -51,12 +51,6 @@ class Cube{
 	static #createMaterial(bgcolor,forecolor)
 	{	
 		const textureLoader = new TextureLoader();
-		//const texture1 = textureLoader.load('assets/textures/uv-test-bw.png');
-		//const texture2 = textureLoader.load('assets/textures/uv-test-col.png');
-		//texture.wrapS = RepeatWrapping;
-		//texture.wrapT = RepeatWrapping;
-		//texture.repeat.set(3,3)
-		//const color = 'red'
 		
 		const materials = [ ]
 		/*for(let i =1;i<4;i++){

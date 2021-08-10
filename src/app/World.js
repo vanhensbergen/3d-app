@@ -24,7 +24,7 @@ class World {
 	  this.addActor( Cube.create({bgcolor:'blue',forecolor:'white',size:2}));
 	  this.addActor( Cube.create({bgcolor:0x000000,forecolor:'#00ff00',size:1}));
 	  this.positionActor(1,4 ,0,0)
-	  this.positionActor(2,-5,0,0)
+	  this.positionActor(2,-4,0,0)
 	  this.#scene = Scene.create();
 	  this.#camera = Camera.create();
 	  this.#renderer = Renderer.create();
