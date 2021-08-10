@@ -50,8 +50,6 @@ class Cube extends BoxGeometry{
         for( const canvas of this.#canvasses){
             textures.push(new CanvasTexture(canvas));
         } 
-		const textureLoader = new TextureLoader();
-		
 		const materials = [ ]
 		for(let i=1; i<4; i++){
             //;
