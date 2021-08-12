@@ -22,14 +22,19 @@ class World {
   constructor(container) {
 	  this.#container = container
 	  this.#updatables = [];
-	  this.addUpdatable(new Cube(2.5,'black','green'));
-	  this.addUpdatable(new Cube(2,'blue','white'));
+	  this.addUpdatable(new Cube(1.5,'lightgreen','red'));
+	  this.addUpdatable(new Cube(1.5,'blue','white'));
 	  this.addUpdatable(new Cube(1.5,'black','green'));
-	  this.positionUpdatable(1,4,0,0);
-	  this.positionUpdatable(2,-4,0,0);
+	  this.positionUpdatable(2,4,0,0);
+	  this.positionUpdatable(0,-4,0,0);
+	  let phi = 0.5*Math.PI
+	  this.#updatables[0].showFace(3)
+	  this.#updatables[1].showFace(2)
+	  this.#updatables[2].showFace(1)
+
 	  //colors are changeble with propertie setters. Great!!!!
-	  this.#updatables[0].foreColor ='red';
-	  this.#updatables[0].backColor ='lightgreen';
+	  //this.#updatables[0].foreColor ='red';
+	  //this.#updatables[0].backColor ='lightgreen';
 	  
 
 	  this.#scene = Scene.create();
@@ -38,7 +43,7 @@ class World {
 	  this.#loop = new Loop( this.camera, this.scene, this.renderer)
 	  for (const updatable of this.#updatables)
 	  {
-		  this.loop.addUpdatable(updatable)
+		 this.loop.addUpdatable(updatable)
 	  }
 	  this.container.append(this.renderer.domElement);
 	  this.#directionalLight = Light.createDirectionalLight();
@@ -62,6 +67,9 @@ class World {
 	}
 	positionUpdatable(actorIndex,x,y,z){
 		this.#updatables[actorIndex].position(x,y,z);
+	}
+	rotateUpdatable(actorIndex,x,y,z){
+		this.#updatables[actorIndex].rotation(x,y,z);
 	}
 	stop(){
 	 this.loop.stop();

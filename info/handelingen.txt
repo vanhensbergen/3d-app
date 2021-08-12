@@ -1,14 +1,32 @@
-1 maak een root map voor je aapp 3d-app
-2 open powershell en voer uit npm init
+zorg dat je node.js hebt geinstalleerd op de ontwikkelpc.Je beschikt dan ook over npm (node package manager)
+
+1 maak een root map voor je applicatie, in mijn geval 3d-app.Plaats die map bij voorkeur in de publieke map van een webserver
+Je kan dan de applicatie onderlocalhost oproepen. Zeker met modules kan dat handig zijn.
+Heb je een builder dan is dat meestal niet nodig enkel als je met assets gaat werken.
+2 open powershell en voer uit vanaf de commandprompt
+			npm init
 	dit stelt vragen en maakt een package.json file aan
 3 installeer webpack voor de te maken applicatie
 		yarn add webpack webpack-cli -D
 4 voeg three toe aan het project met yarn
 		yarn add three
-voer uit wat in de url https://www.devfacto.com/blog/webpack-basics-tutorial
+
 
 maak een webpack.config.js met inhoud aan.
-pas voor het pad naar webpck ook package.json aan.
+zodat webpack automatisch built bij elke verandering in de code
+			const path = require('path');
 
+			module.exports = {
+				watch: true,
+				mode: "production",
+				entry: './src/index.js',
+				output: {
+					path: path.resolve(__dirname, 'dist'),
+					filename: 'bundle.js'
+				}
+			};
+De watch true zorg voor het gewenste automatisch builden
+5 start webpack vanaf de prompt met:
+	yarn webpack
 
 	

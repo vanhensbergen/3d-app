@@ -2,7 +2,6 @@ import {
     BoxGeometry, 
     Mesh, 
     MeshStandardMaterial,
-    TextureLoader,
     CanvasTexture,
 } 
 from 'three';
@@ -36,7 +35,33 @@ class Cube extends BoxGeometry{
         for (let i = 1; i < 7; i++) {
             this.#createCubeFace(i);
         }
-    }
+    }	
+
+	showFace(value){
+		let phi = 0.5*Math.PI
+		switch(value){
+			case 1:
+				this.rotation(0,-phi,0)
+				break;
+			case 2:
+				this.rotation(phi,0,0)
+				break;
+			case 3:
+				this.rotation(0,0,0);
+				break;
+			case 4:
+				this.rotation(2*phi,0,0);
+				break;
+			case 5:
+				this.rotation(-phi,0,0);
+				break;
+				case 6:
+					this.rotation(0,phi,0);
+					break;
+
+		}
+
+	}
 
     rotation(x,y,z){
         this.#mesh.rotation.set(x, y, z);
