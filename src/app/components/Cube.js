@@ -60,7 +60,8 @@ class Cube extends BoxGeometry{
 					break;
 
 		}
-
+		console.log("hoeken voor waarde "+value+ " zijn: ")
+		console.log(this.#mesh.rotation)
 	}
 
     rotation(x,y,z){

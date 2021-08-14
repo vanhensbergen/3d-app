@@ -28,9 +28,9 @@ class World {
 	  this.positionUpdatable(2,4,0,0);
 	  this.positionUpdatable(0,-4,0,0);
 	  let phi = 0.5*Math.PI
-	  this.#updatables[0].showFace(3)
-	  this.#updatables[1].showFace(2)
-	  this.#updatables[2].showFace(1)
+	  this.#updatables[0].showFace(4)
+	  this.#updatables[1].showFace(5)
+	  this.#updatables[2].showFace(6)
 
 	  //colors are changeble with propertie setters. Great!!!!
 	  //this.#updatables[0].foreColor ='red';
