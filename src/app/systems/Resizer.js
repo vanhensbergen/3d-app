@@ -4,11 +4,11 @@ class Resizer {
 	#camera;
 	#renderer;
 	
-	constructor(container, camera, renderer) {
+	constructor(world) {
 		// Set the camera's aspect ratio
-		this.#container = container;
-		this.#camera = camera;
-		this.#renderer = renderer;
+		this.#container = world.container;
+		this.#camera = world.camera;
+		this.#renderer = world.renderer;
 		this.#setSize();
 		window.addEventListener(	'resize',
 									()=>{

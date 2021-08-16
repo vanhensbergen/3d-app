@@ -5,8 +5,7 @@ import {Light} from './components/Light'
 import { Renderer } from './systems/Renderer';
 import { Resizer } from './systems/Resizer';
 import {Loop } from './systems/Loop';
-
-
+import { InputDetector } from './systems/InputDetector';
 
 class World {
  #container
@@ -25,16 +24,16 @@ class World {
 	  this.addUpdatable(new Cube(1.5,'lightgreen','red'));
 	  this.addUpdatable(new Cube(1.5,'blue','white'));
 	  this.addUpdatable(new Cube(1.5,'black','green'));
-	  this.positionUpdatable(2,4,0,0);
-	  this.positionUpdatable(0,-4,0,0);
+	  this.positionUpdatable(2,4,0,-2);
+	  this.positionUpdatable(0,-4,0,-5);
 	  let phi = 0.5*Math.PI
-	  this.#updatables[0].showFace(4)
-	  this.#updatables[1].showFace(5)
-	  this.#updatables[2].showFace(6)
+	  this.#updatables[0].showFace(1)
+	  this.#updatables[1].showFace(2)
+	  this.#updatables[2].showFace(3)
 
 	  //colors are changeble with propertie setters. Great!!!!
-	  //this.#updatables[0].foreColor ='red';
-	  //this.#updatables[0].backColor ='lightgreen';
+	  //this.#updatables[0].foreColor ='black';
+	  //this.#updatables[0].backColor ='red';
 	  
 
 	  this.#scene = Scene.create();
@@ -49,10 +48,14 @@ class World {
 	  this.#directionalLight = Light.createDirectionalLight();
 	  this.#ambientLight = Light.createAmbientLight();
 	  this.scene.add(...this.updatableMeshes, this.directionalLight, this.ambientLight);
-	  new Resizer(this.container, this.camera, this.renderer);
+	  new Resizer(this);
+	  new InputDetector(this);
 	}
 	render() {
 	  this.renderer.render(this.scene, this.camera);
+	}
+	get camera(){
+		return this.#camera;
 	}
 	addUpdatable(updatable){
 		this.#updatables.push(updatable);
@@ -64,6 +67,14 @@ class World {
 			meshes.push(updatable.mesh);
 		}
 		return meshes;
+	}
+	getUpdatable(mesh){
+		for(const updatable of this.#updatables ){
+			if(updatable.mesh===mesh){
+				return updatable;
+			}
+		}
+		return null;
 	}
 	positionUpdatable(actorIndex,x,y,z){
 		this.#updatables[actorIndex].position(x,y,z);

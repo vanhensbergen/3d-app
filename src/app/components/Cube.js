@@ -10,11 +10,13 @@ class Cube extends BoxGeometry{
     #backColor;
     #canvasses;
     #mesh
+	#rolls;
     constructor(size,backcolor, forecolor){
         super(size,size,size);
         this.#foreColor = forecolor;
-        this.#backColor = backcolor;
-        this.#canvasses = [];
+        this.#backColor = backcolor; 
+		this.#rolls = true; 
+		this.#canvasses = [];
         for (let i =0; i<6; i++)
         {
             this.#canvasses.push(document.createElement('canvas'));
@@ -25,7 +27,7 @@ class Cube extends BoxGeometry{
         return this.#mesh;
     }
     #init(){
-
+		
         this.#createCubeFaces();
         const materials = this.#createMaterial();
         this.#mesh = new Mesh(this,materials);
@@ -60,8 +62,6 @@ class Cube extends BoxGeometry{
 					break;
 
 		}
-		console.log("hoeken voor waarde "+value+ " zijn: ")
-		console.log(this.#mesh.rotation)
 	}
 
     rotation(x,y,z){
@@ -135,6 +135,7 @@ class Cube extends BoxGeometry{
 				this.#createEye(canvas,3,2,r)
 				break;
 		}
+		
 	}
 	#createEye(canvas, x,y,r){
 		const xx = x*canvas.width/4;
@@ -172,6 +173,10 @@ class Cube extends BoxGeometry{
     set foreColor(value){
         this.#foreColor = value;
         this.#createCubeFaces();
+		const materials = this.mesh.material;
+		for(const material of materials){
+			material.map.needsUpdate=true;	
+		}
         
     }
     get backColor(){
@@ -180,14 +185,27 @@ class Cube extends BoxGeometry{
     set backColor(value){
         this.#backColor = value;
 		this.#createCubeFaces();
+		//vraag een update aan van de faces
+		const materials = this.mesh.material;
+		for(const material of materials){
+			material.map.needsUpdate=true;	
+		}
     }
+	stop(){
+		this.#rolls=!this.#rolls;
+		const tmp = this.foreColor;
+		this.foreColor= this.backColor;
+		this.backColor = tmp;
+	}
     tick (delta){
         //delta is the time it takes to have a new update
         //fraction is the size in radians so the rotation goes at 3 degrees a second
-        const fraction = 30/180*Math.PI*delta
-        this.#mesh.rotation.z += 0.7*fraction
-        this.#mesh.rotation.x += fraction
-        this.#mesh.rotation.y += 0.3*fraction
+		if(this.#rolls){
+			const fraction = 30/180*Math.PI*delta
+			this.#mesh.rotation.z += 0.7*fraction
+			this.#mesh.rotation.x += fraction
+			this.#mesh.rotation.y += 0.3*fraction
+		}
     }
 }
 export {Cube}
