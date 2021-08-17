@@ -10,7 +10,7 @@ class InputDetector{
         this.#world = world
         this.#camera = this.#world.camera;
         this.#scene = this.#world.scene;
-        this.#container =this.#world.container.querySelector('canvas');
+        this.#container =this.#world.container
         this.#raycaster = new Raycaster();
         this.#container.addEventListener('click',(event)=>{
             this.onSelect(event);
@@ -27,9 +27,13 @@ class InputDetector{
 
 	    // calculate objects intersecting the picking ray
 	    const intersects = this.#raycaster.intersectObjects( this.#scene.children );
-        for ( let i = 0; i < intersects.length; i ++ ) {
-
-            (this.#world.getUpdatable(intersects[i].object)).stop();
+        for ( const intersect of intersects ) {
+            const die = this.#world.getUpdatable(intersect.object);
+            die.stop();
+            const eyes = die.faceToEyes(intersect.face)
+            console.log(" dobbelwaarde: "+eyes)
+            die.showFace(eyes);
+            
         }
     }
 }

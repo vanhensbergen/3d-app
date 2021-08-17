@@ -207,5 +207,16 @@ class Cube extends BoxGeometry{
 			this.#mesh.rotation.y += 0.3*fraction
 		}
     }
+	faceToEyes(face){
+		const materialIndex = face.materialIndex;
+		let eyes;
+		if(materialIndex%2===0){
+			eyes = (2+materialIndex)/2
+		}
+		else{
+			eyes = (13-materialIndex)/2
+		}
+		return eyes;
+	}
 }
 export {Cube}
