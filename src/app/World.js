@@ -6,6 +6,7 @@ import { Renderer } from './systems/Renderer';
 import { Resizer } from './systems/Resizer';
 import {Loop } from './systems/Loop';
 import { InputDetector } from './systems/InputDetector';
+import { OperatorBox } from './components/OperatorBox';
 
 class World {
  #container
@@ -15,35 +16,56 @@ class World {
  #scene;
  #renderer
  #loop;
- #updatables;
+ #dice;
+ #operators
  
  
   constructor(container) {
 	  this.#container = container
-	  this.#updatables = [];
-	  this.addUpdatable(new Die(1.5,'lightgreen','red'));
-	  this.addUpdatable(new Die(1.5,'blue','white'));
-	  this.addUpdatable(new Die(1.5,'black','green'));
-	  this.positionUpdatable(2,4,0,-2);
-	  this.positionUpdatable(0,-4,0,-2);
+	  this.#dice = [];
+	  this.#dice.push(new Die(1,'lightgreen','red'));
+	  this.#dice.push(new Die(1,'blue','white'));
+	  this.#dice.push(new Die(1,'black','green'));
+	  this.#dice[2].position(4,0,-2);
+	  this.#dice[1].position(0,0,-2);
+	  this.#dice[0].position(-4,0,-2);
 	  let phi = 0.5*Math.PI
-	  this.#updatables[0].showFace(1)
-	  this.#updatables[1].showFace(2)
-	  this.#updatables[2].showFace(3)
+	  this.#dice[0].showFace(1)
+	  this.#dice[1].showFace(2)
+	  this.#dice[2].showFace(3)
 	  this.#scene = Scene.create();
 	  this.#camera = Camera.create();
 	  this.#renderer = Renderer.create();
+	  
+	  
+	  this.#operators = []
+	  this.#operators.push(new OperatorBox(0.5,'yellow','black'));
+	  this.#operators.push(new OperatorBox(0.5,'yellow','black'));
+	 
+	  this.#operators[0].position(-1.5,0,0)
+	  this.#operators[1].position(1.5,0,0)
 	  this.#loop = new Loop( this.camera, this.scene, this.renderer)
-	  for (const updatable of this.#updatables)
+	  for (const die of this.#dice)
 	  {
-		 this.loop.addUpdatable(updatable)
+		this.loop.addUpdatable(die)
 	  }
+	  for(const o of this.#operators){
+		this.loop.addUpdatable(o)
+	  }
+
 	  this.container.append(this.renderer.domElement);
 	  this.#directionalLight = Light.createDirectionalLight();
 	  this.#ambientLight = Light.createAmbientLight();
-	  this.scene.add(...this.updatableMeshes, this.directionalLight, this.ambientLight);
+	  this.scene.add(...this.meshes, this.directionalLight, this.ambientLight);
 	  new Resizer(this);
-	  new InputDetector(this);
+	  let detector = new InputDetector(this);
+	  detector.handle = (object)=>{this.handle(object)};
+
+	}
+	handle(intersect){
+        
+		const die = this.getSelected(intersect.object);
+        die.stop(intersect.face);
 	}
 	render() {
 	  this.renderer.render(this.scene, this.camera);
@@ -51,31 +73,35 @@ class World {
 	get camera(){
 		return this.#camera;
 	}
-	addUpdatable(updatable){
-		this.#updatables.push(updatable);
-	}
-	get updatableMeshes(){
+
+
+	get meshes(){
 		const meshes = [];
-		for (const updatable of this.#updatables)
+		for (const die of this.#dice)
 		{
-			meshes.push(updatable.mesh);
+			meshes.push(die.visible);
+		}
+		for (const o of this.#operators)
+		{
+			meshes.push(o.visible);
 		}
 		return meshes;
 	}
-	getUpdatable(mesh){
-		for(const updatable of this.#updatables ){
-			if(updatable.mesh===mesh){
-				return updatable;
+	getSelected(mesh){
+		for(const object of this.#dice ){
+			if(object.visible===mesh){
+				return object;
 			}
 		}
+		for(const object of this.#operators ){
+			if(object.visible===mesh){
+				return object;
+			}
+		}
+
 		return null;
 	}
-	positionUpdatable(actorIndex,x,y,z){
-		this.#updatables[actorIndex].position(x,y,z);
-	}
-	rotateUpdatable(actorIndex,x,y,z){
-		this.#updatables[actorIndex].rotation(x,y,z);
-	}
+	
 	stop(){
 	 this.loop.stop();
 	}

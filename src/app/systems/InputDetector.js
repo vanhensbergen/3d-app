@@ -5,12 +5,10 @@ class InputDetector{
     #scene;
     #raycaster;
     #container;
-    #world
     constructor(world){
-        this.#world = world
-        this.#camera = this.#world.camera;
-        this.#scene = this.#world.scene;
-        this.#container =this.#world.container
+        this.#camera = world.camera;
+        this.#scene = world.scene;
+        this.#container = world.container
         this.#raycaster = new Raycaster();
         this.#container.addEventListener('click',(event)=>{
             this.onSelect(event);
@@ -28,10 +26,12 @@ class InputDetector{
 	    // calculate objects intersecting the picking ray
 	    const intersects = this.#raycaster.intersectObjects( this.#scene.children );
         for ( const intersect of intersects ) {
-            const die = this.#world.getUpdatable(intersect.object);
-            die.stop(intersect.face);
+            this.handle(intersect)
             
         }
+    }
+    handle(object){
+        //wordt overschreven bij implementatie in world
     }
 }
 export{InputDetector};

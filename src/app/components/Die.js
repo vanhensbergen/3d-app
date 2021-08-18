@@ -1,106 +1,52 @@
-import {	
-    BoxGeometry, 
-    Mesh, 
+import {
     MeshStandardMaterial,
     CanvasTexture,
 } 
 from 'three';
-class Die extends BoxGeometry{
-    #foreColor;
-    #backColor;
-    #canvasses;
-    #mesh
-	#rolls;
-	#selectedValue;
+import { AbstractCube } from './AbstractCube';
+
+class Die extends AbstractCube{
+    #eyes;
     constructor(size,backcolor, forecolor){
-        super(size,size,size);
-        this.#foreColor = forecolor;
-        this.#backColor = backcolor; 
-		this.#rolls = true; 
-		this.#canvasses = [];
-        for (let i =0; i<6; i++)
-        {
-            this.#canvasses.push(document.createElement('canvas'));
-        }
-        this.#init();
+        super(size,backcolor, forecolor);
+		//de alhier toegepaste volgorde van aantalogen zorgt ervoor dat er sprake is van steeds twee gekoppelde waarden 6 en 1 2 en 5 etc
+        this.#eyes = [1,6,2,5,3,4]
+        this.init();
     }
-    get mesh(){
-        return this.#mesh;
-    }
-    #init(){
-		
-        this.#createCubeFaces();
-        const materials = this.#createMaterial();
-        this.#mesh = new Mesh(this,materials);
-
-    }
-    #createCubeFaces() {
-        for (let i = 1; i < 7; i++) {
-            this.#createCubeFace(i);
-        }
-    }	
-
-	showFace(value){
-		let phi = 0.5*Math.PI
-		switch(value){
-			case 1:
-				this.rotation(0,-phi,0)
-				break;
-			case 2:
-				this.rotation(phi,0,0)
-				break;
-			case 3:
-				this.rotation(0,0,0);
-				break;
-			case 4:
-				this.rotation(2*phi,0,0);
-				break;
-			case 5:
-				this.rotation(-phi,0,0);
-				break;
-				case 6:
-					this.rotation(0,phi,0);
-					break;
-		}
-	}
-
-    rotation(x,y,z){
-        this.#mesh.rotation.set(x, y, z);
-    }
-    position(x,y,z){
-        this.#mesh.position.set(x,y,z)
-    }
-
-	#createMaterial(){	
-        const textures = [];
-        for( const canvas of this.#canvasses){
-            textures.push(new CanvasTexture(canvas));
+	//overriding van base method in AbstractCube	
+	createMaterial(){	
+		const textures = [];
+		for( const canvas of this.canvasses){
+			textures.push(new CanvasTexture(canvas));
 			//elke texture bevat een canvas met een aantal ogen één hoger dan de index van de texture
-        } 
+		} 
 		const materials = [ ]
-		for(let i=0; i<3; i++){
-            //de volgorde van pushing zorgt voor correcte dobbelsteen met  de 2 opponerende zijden samen steeds 7;
+		for(let i=0; i<6; i++){
+			//de volgorde van pushing zorgt voor correcte dobbelsteen met  de 2 opponerende zijden samen steeds 7;
+			//de materials worden adus correct geplaatst tegenover elkaar steeds de 2 opeenvolgende
 			materials.push(new MeshStandardMaterial({map:textures[i] }))
-			materials.push(new MeshStandardMaterial({map:textures[5-i] }))
 		}						
 		return materials;
-	}	
-	
-	#createCubeFace(value){
-		const canvas = this.#canvasses[value-1]//canvas met index 0 is verantwoordelijk voor side with one eye etc
-		const size = 256
+	}
+	createFace(value){
+		//canvas met index 0 is verantwoordelijk voor face 1 with one eye
+		//canvas met index 1 is verantwoodelijk voor face 2 met 6 eyes
+		//canvas met index 2 is verantwordelijk voor face 3 met 2 ogen etc..
+		const canvas = this.canvasses[value];
+		const eyes = this.#eyes[value]
+		const size = 200
 		canvas.width = size;
 		canvas.height= size;
 		const ctx = canvas.getContext('2d');
-		ctx.fillStyle = this.#backColor;
+		ctx.fillStyle = this.backColor;
 		ctx.fillRect(0,0,canvas.width,canvas.width)
-		ctx.strokeStyle = this.#foreColor;
+		ctx.strokeStyle = this.foreColor;
 		ctx.lineWidth = 3;
-		ctx.fillStyle = this.#foreColor;
+		ctx.fillStyle = this.foreColor;
 		this.#createRoundedRectangle(canvas,3,3,canvas.width-6,canvas.height-6)
 		const r = size/8-3//r moet kleiner dan size/8 anders is er overlap bij de waarde 6
 	
-		switch(value){
+		switch(eyes){
 			case 1:
 				this.#createEye(canvas,2 ,2,r)
 				break;
@@ -149,6 +95,7 @@ class Die extends BoxGeometry{
 		pen.fill();
 		pen.restore();
 	}
+
 	#createRoundedRectangle(canvas,x,y,width,height){
 		const pen = canvas.getContext('2d')
 		pen.save()
@@ -167,68 +114,11 @@ class Die extends BoxGeometry{
 			pen.stroke();
 		pen.restore()
 	}
-    get foreColor(){
-        return this.#foreColor 
-    }
-    set foreColor(value){
-        this.#foreColor = value;
-        this.#createCubeFaces();
-		const materials = this.mesh.material;
-		for(const material of materials){
-			material.map.needsUpdate=true;	
-		}
-        
-    }
-    get backColor(){
-        return this.#backColor 
-    }
-    set backColor(value){
-        this.#backColor = value;
-		this.#createCubeFaces();
-		//vraag een update aan van de faces
-		const materials = this.mesh.material;
-		for(const material of materials){
-			material.map.needsUpdate=true;	
-		}
-    }
-	stop(face){
-		this.#rolls=!this.#rolls;
-		const tmp = this.foreColor;
-		this.foreColor= this.backColor;
-		this.backColor = tmp;
-		if(!this.#rolls){
-			let value = this.faceToEyes(face)
-			this.#selectedValue = value;
-			this.showFace(value)
-		}
-	}
-	get selectedValue(){
-		return !this.#rolls?this.#selectedValue:null
-	}
-	get rolls(){
-		return this.#rolls;
-	}
-    tick (delta){
-        //delta is the time it takes to have a new update
-        //fraction is the size in radians so the rotation goes at 30 degrees a second
-		if(this.#rolls){
-			const fraction = 30/180*Math.PI*delta
-			this.#mesh.rotation.z += fraction
-			this.#mesh.rotation.x += fraction
-			this.#mesh.rotation.y += fraction
-		}
-    }
 
-	faceToEyes(face){
-		const materialIndex = face.materialIndex;
-		let eyes;
-		if(materialIndex%2===0){
-			eyes = (2+materialIndex)/2
-		}
-		else{
-			eyes = (13-materialIndex)/2
-		}
-		return eyes;
+	//overriding van base method in AbstractCube
+	set selectedValue(index){
+		const value = this.#eyes[index];
+		super.selectedValue = value
 	}
 }
 export {Die}
