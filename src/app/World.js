@@ -1,4 +1,4 @@
-import {Cube} from './components/Cube';
+import {Die} from './components/Die';
 import { Camera } from './components/Camera';
 import { Scene } from './components/Scene';
 import {Light} from './components/Light'
@@ -21,21 +21,15 @@ class World {
   constructor(container) {
 	  this.#container = container
 	  this.#updatables = [];
-	  this.addUpdatable(new Cube(1.5,'lightgreen','red'));
-	  this.addUpdatable(new Cube(1.5,'blue','white'));
-	  this.addUpdatable(new Cube(1.5,'black','green'));
+	  this.addUpdatable(new Die(1.5,'lightgreen','red'));
+	  this.addUpdatable(new Die(1.5,'blue','white'));
+	  this.addUpdatable(new Die(1.5,'black','green'));
 	  this.positionUpdatable(2,4,0,-2);
-	  this.positionUpdatable(0,-4,0,-5);
+	  this.positionUpdatable(0,-4,0,-2);
 	  let phi = 0.5*Math.PI
 	  this.#updatables[0].showFace(1)
 	  this.#updatables[1].showFace(2)
 	  this.#updatables[2].showFace(3)
-
-	  //colors are changeble with propertie setters. Great!!!!
-	  //this.#updatables[0].foreColor ='black';
-	  //this.#updatables[0].backColor ='red';
-	  
-
 	  this.#scene = Scene.create();
 	  this.#camera = Camera.create();
 	  this.#renderer = Renderer.create();

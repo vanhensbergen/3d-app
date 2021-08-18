@@ -5,7 +5,7 @@ import {
     CanvasTexture,
 } 
 from 'three';
-class Cube extends BoxGeometry{
+class Die extends BoxGeometry{
     #foreColor;
     #backColor;
     #canvasses;
@@ -231,4 +231,4 @@ class Cube extends BoxGeometry{
 		return eyes;
 	}
 }
-export {Cube}
+export {Die}
