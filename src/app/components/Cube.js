@@ -11,6 +11,7 @@ class Cube extends BoxGeometry{
     #canvasses;
     #mesh
 	#rolls;
+	#selectedValue;
     constructor(size,backcolor, forecolor){
         super(size,size,size);
         this.#foreColor = forecolor;
@@ -60,7 +61,6 @@ class Cube extends BoxGeometry{
 				case 6:
 					this.rotation(0,phi,0);
 					break;
-
 		}
 	}
 
@@ -191,22 +191,34 @@ class Cube extends BoxGeometry{
 			material.map.needsUpdate=true;	
 		}
     }
-	stop(){
+	stop(face){
 		this.#rolls=!this.#rolls;
 		const tmp = this.foreColor;
 		this.foreColor= this.backColor;
 		this.backColor = tmp;
+		if(!this.#rolls){
+			let value = this.faceToEyes(face)
+			this.#selectedValue = value;
+			this.showFace(value)
+		}
+	}
+	get selectedValue(){
+		return !this.#rolls?this.#selectedValue:null
+	}
+	get rolls(){
+		return this.#rolls;
 	}
     tick (delta){
         //delta is the time it takes to have a new update
-        //fraction is the size in radians so the rotation goes at 3 degrees a second
+        //fraction is the size in radians so the rotation goes at 30 degrees a second
 		if(this.#rolls){
 			const fraction = 30/180*Math.PI*delta
-			this.#mesh.rotation.z += 0.7*fraction
+			this.#mesh.rotation.z += fraction
 			this.#mesh.rotation.x += fraction
-			this.#mesh.rotation.y += 0.3*fraction
+			this.#mesh.rotation.y += fraction
 		}
     }
+
 	faceToEyes(face){
 		const materialIndex = face.materialIndex;
 		let eyes;

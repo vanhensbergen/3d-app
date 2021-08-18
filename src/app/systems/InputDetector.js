@@ -29,10 +29,7 @@ class InputDetector{
 	    const intersects = this.#raycaster.intersectObjects( this.#scene.children );
         for ( const intersect of intersects ) {
             const die = this.#world.getUpdatable(intersect.object);
-            die.stop();
-            const eyes = die.faceToEyes(intersect.face)
-            console.log(" dobbelwaarde: "+eyes)
-            die.showFace(eyes);
+            die.stop(intersect.face);
             
         }
     }
