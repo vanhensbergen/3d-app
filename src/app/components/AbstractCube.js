@@ -3,9 +3,16 @@ import {
     Mesh, 
 } 
 from 'three';
+/**
+ * AbstractCube stelt een kubusvormige geometry voor met 6 canvas elementen één voor eke zijde. Het is aan de 
+ * kinderen om deze canvassen inhoud te geven.
+ * Er zijn daartoe een achtergrond en een voorgrondkleur gegeven.
+ * De kinderen hebben als erfenis al de beschikking over een  tick methode en een stop methode
+ * De showFace methode toont de canvaszijde van de face. De face heeft zijn materialIndex
+ */
 class AbstractCube extends BoxGeometry{
     #canvasses;
-    rolls;
+    #rolls;
     #visible;
     #foreColor;
     #backColor;
@@ -16,7 +23,7 @@ class AbstractCube extends BoxGeometry{
         this.#foreColor = foreColor;
         this.#backColor = backColor;
         this.#canvasses = [];
-        this.rolls = true
+        this.#rolls = true
         this.#selectedValue = null;
         for (let i =0; i<6; i++)
         {
@@ -70,7 +77,7 @@ class AbstractCube extends BoxGeometry{
 				this.rotation(0,0,0);
 				break;
 			case 5:
-				this.rotation(2*phi,0,0);
+				this.rotation(2*phi,0,2*phi);
 				break;
 		}
 	}
@@ -78,31 +85,41 @@ class AbstractCube extends BoxGeometry{
     tick (delta){
         //delta is the time it takes to have a new update
         //fraction is the size in radians so the rotation goes at 30 degrees a seconde
-		if(this.rolls){
+		if(this.#rolls){
 			const fraction = 30/180*Math.PI*delta
-			this.visible.rotation.z += fraction
-			this.visible.rotation.x += fraction
-			this.visible.rotation.y += fraction
+			this.visible.rotation.z += 1.1*fraction
+			this.visible.rotation.x += 1.3*fraction
+			this.visible.rotation.y += 1.7*fraction
 		}
     }
 
     stop(face){
-		this.rolls=!this.rolls;
+		this.#rolls=!this.#rolls;
         this.#selectedValue=null;
 		const tmp = this.foreColor;
 		this.foreColor= this.backColor;
 		this.backColor = tmp;
-		if(!this.rolls){
+		if(!this.#rolls){
 			const index = face.materialIndex
 			this.selectedValue = index;
 			this.showFace(index)
 		}
-        console.log(this.#selectedValue)
 	}
 
+    
 
+    get positionedValue(){
+        const o = new Object();
+        o.x = this.#visible.position.x
+        o.value = this.#selectedValue;
+        return o;
+        
+    }
     set selectedValue(index){
         this.#selectedValue = index;
+    }
+    get selectedValue(){
+        return this.#selectedValue
     }
     get visible(){
         return this.#visible;
@@ -144,7 +161,9 @@ class AbstractCube extends BoxGeometry{
     rotation(x,y,z){
         this.visible.rotation.set(x, y, z);
     }
-
+    get stopped(){
+        return !this.#rolls
+    }
 
 }
 

@@ -120,5 +120,9 @@ class Die extends AbstractCube{
 		const value = this.#eyes[index];
 		super.selectedValue = value
 	}
+	//overriding is nodig anders wrkt het niet.
+	get selectedValue(){
+		return super.selectedValue
+	}
 }
 export {Die}

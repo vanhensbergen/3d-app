@@ -7,6 +7,8 @@ import { Resizer } from './systems/Resizer';
 import {Loop } from './systems/Loop';
 import { InputDetector } from './systems/InputDetector';
 import { OperatorBox } from './components/OperatorBox';
+import { CalculusController } from './components/controls/CalculusController';
+
 
 class World {
  #container
@@ -61,6 +63,7 @@ class World {
 	  new Resizer(this);
 	  let detector = new InputDetector(this);
 	  detector.handle = (object)=>{this.handle(object)};
+	  new CalculusController(this);
 
 	}
 	handle(intersect){
@@ -75,6 +78,37 @@ class World {
 		return this.#camera;
 	}
 
+	isSumReady(){
+		let isReady = true;
+		for (const die of this.#dice)
+		{
+			isReady = isReady&&die.stopped;
+		}
+		for (const o of this.#operators)
+		{
+			isReady = isReady&&o.stopped;
+		}
+		return isReady;
+	}
+	getSumString(){
+		let positionedValues = [];
+		for (const die of this.#dice)
+		{
+			positionedValues.push(die.positionedValue);
+		}
+		for (const o of this.#operators)
+		{
+			positionedValues.push(o.positionedValue);
+		}
+		positionedValues = positionedValues.sort((a,b)=>a.x-b.x)
+		let sumString = "";
+		for(const pv of positionedValues){
+			
+			sumString +=pv.value
+			
+		}
+		return sumString;
+	}
 
 	get meshes(){
 		const meshes = [];
