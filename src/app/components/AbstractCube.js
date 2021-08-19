@@ -25,6 +25,9 @@ class AbstractCube extends BoxGeometry{
             canvas.height = 200;
             this.#canvasses.push(canvas);
         }
+        if (this.constructor == AbstractCube) {
+            throw new Error("Abstract classes can't be instantiated.");
+          }
     }
 
     init(){
@@ -45,7 +48,7 @@ class AbstractCube extends BoxGeometry{
     }
     /**
      * zet de face frontaal die bevraagd wodt.
-     * de index is de texture materiaal index 
+     * de index is de texture materiaal index deze wordt verkregen uit het intersect object
      * @param  index 
      */
     showFace(index){

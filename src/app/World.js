@@ -43,6 +43,7 @@ class World {
 	  this.#operators.push(new OperatorBox(0.5,'yellow','black'));
 	 
 	  this.#operators[0].position(-1.5,0,0)
+	  this.#operators[0].rotation(2,3,1)
 	  this.#operators[1].position(1.5,0,0)
 	  this.#loop = new Loop( this.camera, this.scene, this.renderer)
 	  for (const die of this.#dice)
