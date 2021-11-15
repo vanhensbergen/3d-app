@@ -28,25 +28,33 @@ class World {
 	  this.#dice.push(new Die(1,'lightgreen','red'));
 	  this.#dice.push(new Die(1,'blue','white'));
 	  this.#dice.push(new Die(1,'black','green'));
-	  this.#dice[2].position(4,0,-2);
-	  this.#dice[1].position(0,0,-2);
+	  this.#dice[2].position(4.6,0,-2);
+	  this.#dice[1].position(0.5,0,-2);
 	  this.#dice[0].position(-4,0,-2);
-	  let phi = 0.5*Math.PI
 	  this.#dice[0].showFace(1)
 	  this.#dice[1].showFace(2)
 	  this.#dice[2].showFace(3)
 	  this.#scene = Scene.create();
 	  this.#camera = Camera.create();
 	  this.#renderer = Renderer.create();
-	  
-	  
+	
 	  this.#operators = []
+	  this.#operators.push(new OperatorBox(0.5,'yellow','black',['(',' ','(',' ',' ',' ']));
 	  this.#operators.push(new OperatorBox(0.5,'yellow','black'));
+	  this.#operators.push(new OperatorBox(0.5,'yellow','black',['(',' ','(',' ',' ',' ']));
+	  
+	  this.#operators.push(new OperatorBox(0.5,'yellow','black',[')',' ',')',' ',' ',' ']));
 	  this.#operators.push(new OperatorBox(0.5,'yellow','black'));
 	 
-	  this.#operators[0].position(-1.5,0,0)
+	  this.#operators[0].position(-5,0,0)
 	  this.#operators[0].rotation(2,3,1)
-	  this.#operators[1].position(1.5,0,0)
+
+	  this.#operators[1].position(-2,0,0)
+	  this.#operators[1].rotation(-1.5,3,1)
+	  this.#operators[2].position(-1,0,0);
+	  this.#operators[3].position(1.7,0,0);
+	  this.#operators[4].position(2.6,0,0);
+
 	  this.#loop = new Loop( this.camera, this.scene, this.renderer)
 	  for (const die of this.#dice)
 	  {
@@ -55,7 +63,6 @@ class World {
 	  for(const o of this.#operators){
 		this.loop.addUpdatable(o)
 	  }
-
 	  this.container.append(this.renderer.domElement);
 	  this.#directionalLight = Light.createDirectionalLight();
 	  this.#ambientLight = Light.createAmbientLight();

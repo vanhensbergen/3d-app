@@ -11,10 +11,10 @@ class OperatorBox extends AbstractCube{
   
     #operations;
 
-    constructor(size,backcolor,forecolor){
+    constructor(size,backcolor,forecolor, operators=['+','-','*','/','(',')']){
         super(size,backcolor,forecolor);
         
-        this.#operations = ['+','-','*','/','(',')'];
+        this.#operations = operators;
         this.init();
         
     }
@@ -35,8 +35,8 @@ class OperatorBox extends AbstractCube{
  
     createFace(index){
         let operator = this.#operations[index];
-        operator = index === 2?'x':operator
-        operator = index === 3?"\u00F7":operator
+        operator = operator==='*'?'x':operator
+        operator = operator==='/'?"\u00F7":operator
         const canvas = this.canvasses[index];
         //clear the canvas
         canvas.width = canvas.width;
